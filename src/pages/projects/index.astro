@@ -1,0 +1,193 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const allProjects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.weight - a.data.weight);
+
+const activeProjects = allProjects.filter((p) => p.data.status === 'active');
+const completedProjects = allProjects.filter((p) => p.data.status === 'completed');
+const pausedProjects = allProjects.filter((p) => p.data.status === 'paused');
+const ideaProjects = allProjects.filter((p) => p.data.status === 'idea');
+
+const allTags = [...new Set(allProjects.flatMap((p) => p.data.tags))].sort();
+---
+
+<Layout title="Proyectos" description="Proyectos en los que estoy trabajando o he completado">
+  <section class="page-header">
+    <div class="container">
+      <h1 class="animate-in">Proyectos</h1>
+      <p class="page-desc animate-in">
+        Un registro de lo que construyo, desde ideas hasta proyectos terminados.
+      </p>
+      {allTags.length > 0 && (
+        <div class="page-tags animate-in">
+          {allTags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {allProjects.length > 0 ? (
+        <>
+          {activeProjects.length > 0 && (
+            <div class="project-group">
+              <h2 class="group-title animate-in">En progreso</h2>
+              <div class="projects-grid">
+                {activeProjects.map((project) => (
+                  <ProjectCard
+                    title={project.data.title}
+                    description={project.data.description}
+                    href={`/projects/${project.id}`}
+                    status={project.data.status}
+                    tags={project.data.tags}
+                    image={project.data.image}
+                    repo={project.data.repo}
+                    url={project.data.url}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {completedProjects.length > 0 && (
+            <div class="project-group">
+              <h2 class="group-title animate-in">Completados</h2>
+              <div class="projects-grid">
+                {completedProjects.map((project) => (
+                  <ProjectCard
+                    title={project.data.title}
+                    description={project.data.description}
+                    href={`/projects/${project.id}`}
+                    status={project.data.status}
+                    tags={project.data.tags}
+                    image={project.data.image}
+                    repo={project.data.repo}
+                    url={project.data.url}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {pausedProjects.length > 0 && (
+            <div class="project-group">
+              <h2 class="group-title animate-in">En pausa</h2>
+              <div class="projects-grid">
+                {pausedProjects.map((project) => (
+                  <ProjectCard
+                    title={project.data.title}
+                    description={project.data.description}
+                    href={`/projects/${project.id}`}
+                    status={project.data.status}
+                    tags={project.data.tags}
+                    image={project.data.image}
+                    repo={project.data.repo}
+                    url={project.data.url}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {ideaProjects.length > 0 && (
+            <div class="project-group">
+              <h2 class="group-title animate-in">Ideas</h2>
+              <div class="projects-grid">
+                {ideaProjects.map((project) => (
+                  <ProjectCard
+                    title={project.data.title}
+                    description={project.data.description}
+                    href={`/projects/${project.id}`}
+                    status={project.data.status}
+                    tags={project.data.tags}
+                    image={project.data.image}
+                    repo={project.data.repo}
+                    url={project.data.url}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="empty animate-in">
+          <p>Aún no hay proyectos.</p>
+          <p class="empty-hint">Los proyectos aparecerán aquí cuando se creen.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    padding: var(--sp-16) 0 var(--sp-8);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--sp-3);
+  }
+
+  .page-desc {
+    font-size: var(--text-lg);
+    color: var(--c-text-secondary);
+    max-width: 32rem;
+    margin-bottom: var(--sp-5);
+  }
+
+  .page-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .section {
+    padding-bottom: var(--sp-16);
+  }
+
+  .project-group {
+    margin-bottom: var(--sp-12);
+  }
+
+  .project-group:last-child { margin-bottom: 0; }
+
+  .group-title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-text-tertiary);
+    margin-bottom: var(--sp-5);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--sp-6);
+  }
+
+  .empty {
+    text-align: center;
+    padding: var(--sp-16) 0;
+  }
+
+  .empty p {
+    font-size: var(--text-lg);
+    color: var(--c-text-secondary);
+  }
+
+  .empty-hint {
+    font-size: var(--text-sm);
+    color: var(--c-text-tertiary);
+    margin-top: var(--sp-2);
+  }
+</style>

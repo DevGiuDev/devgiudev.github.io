@@ -1,0 +1,139 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = post.data.pubDate.toLocaleDateString('es-ES', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.heroImage}
+  type="article"
+>
+  <article class="post">
+    <div class="container">
+      <div class="prose">
+        <!-- Header -->
+        <header class="post-header animate-in">
+          <a href="/blog" class="post-back">← Blog</a>
+          <div class="post-meta">
+            <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
+            {post.data.updatedDate && (
+              <span class="post-updated">
+                (Actualizado: {post.data.updatedDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })})
+              </span>
+            )}
+          </div>
+          <h1>{post.data.title}</h1>
+          <p class="post-desc">{post.data.description}</p>
+          {post.data.tags.length > 0 && (
+            <div class="post-tags">
+              {post.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        {post.data.heroImage && (
+          <div class="post-hero animate-in">
+            <img src={post.data.heroImage} alt={post.data.title} />
+          </div>
+        )}
+
+        <!-- Content -->
+        <div class="prose-content animate-in">
+          <Content />
+        </div>
+
+        <!-- Footer -->
+        <footer class="post-footer">
+          <a href="/blog" class="btn btn--ghost">← Volver al blog</a>
+        </footer>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .post {
+    padding: var(--sp-10) 0 var(--sp-16);
+  }
+
+  .post-back {
+    font-size: var(--text-sm);
+    color: var(--c-text-tertiary);
+    display: inline-block;
+    margin-bottom: var(--sp-6);
+    transition: color var(--t-fast);
+  }
+
+  .post-back:hover { color: var(--c-accent); }
+
+  .post-meta {
+    font-size: var(--text-sm);
+    color: var(--c-text-tertiary);
+    margin-bottom: var(--sp-4);
+  }
+
+  .post-updated {
+    font-size: var(--text-xs);
+    color: var(--c-text-tertiary);
+    margin-left: var(--sp-2);
+  }
+
+  .post-header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: var(--sp-4);
+  }
+
+  .post-desc {
+    font-size: var(--text-lg);
+    color: var(--c-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--sp-5);
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-8);
+  }
+
+  .post-hero {
+    margin-bottom: var(--sp-8);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+
+  .post-hero img {
+    width: 100%;
+    border-radius: var(--r-lg);
+  }
+
+  .post-footer {
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border-subtle);
+  }
+</style>

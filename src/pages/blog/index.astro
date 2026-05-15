@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Collect all unique tags
+const allTags = [...new Set(allPosts.flatMap((p) => p.data.tags))].sort();
+---
+
+<Layout title="Blog" description="Artículos sobre desarrollo, tecnología y proyectos personales">
+  <section class="page-header">
+    <div class="container">
+      <h1 class="animate-in">Blog</h1>
+      <p class="page-desc animate-in">Pensamientos, tutoriales y notas sobre desarrollo de software.</p>
+      {allTags.length > 0 && (
+        <div class="page-tags animate-in">
+          {allTags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container wide">
+      {allPosts.length > 0 ? (
+        <div class="posts-grid">
+          {allPosts.map((post) => (
+            <PostCard
+              title={post.data.title}
+              description={post.data.description}
+              href={`/blog/${post.id}`}
+              date={post.data.pubDate}
+              tags={post.data.tags}
+              image={post.data.heroImage}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="empty animate-in">
+          <p>Aún no hay entradas en el blog.</p>
+          <p class="empty-hint">Las entradas aparecerán aquí cuando se publiquen.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    padding: var(--sp-16) 0 var(--sp-8);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--sp-3);
+  }
+
+  .page-desc {
+    font-size: var(--text-lg);
+    color: var(--c-text-secondary);
+    max-width: 32rem;
+    margin-bottom: var(--sp-5);
+  }
+
+  .page-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .section {
+    padding-bottom: var(--sp-16);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--sp-6);
+  }
+
+  .empty {
+    text-align: center;
+    padding: var(--sp-16) 0;
+  }
+
+  .empty p {
+    font-size: var(--text-lg);
+    color: var(--c-text-secondary);
+  }
+
+  .empty-hint {
+    font-size: var(--text-sm);
+    color: var(--c-text-tertiary);
+    margin-top: var(--sp-2);
+  }
+</style>

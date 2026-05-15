@@ -1,0 +1,158 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const startDate = project.data.startDate?.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+const endDate = project.data.endDate?.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+---
+
+<Layout title={project.data.title} description={project.data.description} image={project.data.image}>
+  <article class="project-page">
+    <div class="container">
+      <div class="prose">
+        <!-- Header -->
+        <header class="project-header animate-in">
+          <a href="/projects" class="project-back">← Proyectos</a>
+
+          <div class="project-status-bar">
+            <span class={`status status--${project.data.status}`}>{project.data.status}</span>
+            {startDate && (
+              <span class="project-date">
+                {startDate}{endDate ? ` — ${endDate}` : ' — presente'}
+              </span>
+            )}
+          </div>
+
+          <h1>{project.data.title}</h1>
+          <p class="project-desc">{project.data.description}</p>
+
+          {project.data.tags.length > 0 && (
+            <div class="project-tags">
+              {project.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+
+          {(project.data.repo || project.data.url) && (
+            <div class="project-links">
+              {project.data.repo && (
+                <a href={project.data.repo} target="_blank" rel="noopener noreferrer" class="btn btn--ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  Repositorio
+                </a>
+              )}
+              {project.data.url && (
+                <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="btn btn--ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Ver en vivo
+                </a>
+              )}
+            </div>
+          )}
+        </header>
+
+        {project.data.image && (
+          <div class="project-hero animate-in">
+            <img src={project.data.image} alt={project.data.title} />
+          </div>
+        )}
+
+        <!-- Content -->
+        <div class="prose-content animate-in">
+          <Content />
+        </div>
+
+        <!-- Footer -->
+        <footer class="project-footer">
+          <a href="/projects" class="btn btn--ghost">← Volver a proyectos</a>
+        </footer>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .project-page {
+    padding: var(--sp-10) 0 var(--sp-16);
+  }
+
+  .project-back {
+    font-size: var(--text-sm);
+    color: var(--c-text-tertiary);
+    display: inline-block;
+    margin-bottom: var(--sp-6);
+    transition: color var(--t-fast);
+  }
+
+  .project-back:hover { color: var(--c-accent); }
+
+  .project-status-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-4);
+  }
+
+  .project-date {
+    font-size: var(--text-sm);
+    color: var(--c-text-tertiary);
+  }
+
+  .project-header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: var(--sp-4);
+  }
+
+  .project-desc {
+    font-size: var(--text-lg);
+    color: var(--c-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--sp-5);
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-6);
+  }
+
+  .project-links {
+    display: flex;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-8);
+  }
+
+  .project-hero {
+    margin-bottom: var(--sp-8);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+
+  .project-hero img {
+    width: 100%;
+    border-radius: var(--r-lg);
+  }
+
+  .project-footer {
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border-subtle);
+  }
+</style>
