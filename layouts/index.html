@@ -1,0 +1,47 @@
+{{ define "main" }}
+  <section class="hero">
+    <p class="eyebrow">Inicio</p>
+    <h1>{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="prose hero-copy">{{ . }}</div>
+    {{ end }}
+  </section>
+
+  <section class="grid-two">
+    <section>
+      <div class="section-heading">
+        <h2>Últimos posts</h2>
+        <a href="{{ relURL "posts/" }}">Ver todo</a>
+      </div>
+      <div class="listing listing--compact">
+        {{ range first 3 (sort (where .Site.RegularPages "Section" "posts") "Date" "desc") }}
+          <article class="list-item list-item--compact">
+            <div class="list-item__meta">
+              <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+            </div>
+            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            {{ with .Description }}<p>{{ . }}</p>{{ end }}
+          </article>
+        {{ end }}
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Últimos proyectos</h2>
+        <a href="{{ relURL "projects/" }}">Ver todo</a>
+      </div>
+      <div class="listing listing--compact">
+        {{ range first 3 (sort (where .Site.RegularPages "Section" "projects") "Date" "desc") }}
+          <article class="list-item list-item--compact">
+            <div class="list-item__meta">
+              <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+            </div>
+            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            {{ with .Description }}<p>{{ . }}</p>{{ end }}
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  </section>
+{{ end }}

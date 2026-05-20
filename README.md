@@ -1,46 +1,110 @@
-# Astro Starter Kit: Basics
+# Web personal con Hugo
 
-```sh
-npm create astro@latest -- --template basics
+Sitio estático simple para blog y proyectos, pensado para escribir en Markdown y guardar las imágenes junto a cada entrada mediante page bundles.
+
+## Requisitos
+
+- [Hugo](https://gohugo.io/) instalado en tu equipo
+
+## Instalar dependencias
+
+No hay dependencias frontend adicionales. Solo necesitas Hugo.
+
+## Arrancar el servidor local
+
+```bash
+hugo server
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Si quieres incluir borradores:
 
-## 🚀 Project Structure
+```bash
+hugo server -D
+```
 
-Inside of your Astro project, you'll see the following folders and files:
+## Crear un nuevo post
+
+```bash
+hugo new content posts/mi-post/index.md
+```
+
+Eso crea una carpeta para el post. Luego deja el contenido en `content/posts/mi-post/index.md` y las imágenes al lado:
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+content/posts/mi-post/
+  index.md
+  imagen.png
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+En el Markdown puedes usar rutas simples:
 
-## 🧞 Commands
+```md
+![Descripción](imagen.png)
+```
 
-All commands are run from the root of the project, from a terminal:
+## Crear un nuevo proyecto
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```bash
+hugo new content projects/mi-proyecto/index.md
+```
 
-## 👀 Want to learn more?
+La estructura es la misma:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```text
+content/projects/mi-proyecto/
+  index.md
+  screenshot.png
+```
+
+## Añadir imágenes
+
+- Copia la imagen dentro de la misma carpeta del `index.md`
+- Usa rutas relativas simples
+- No hace falta HTML inline ni estilos en cada post
+
+Ejemplo:
+
+```md
+![Captura](screenshot.png)
+```
+
+## Escribir desde Joplin
+
+1. Escribe la nota en Joplin en Markdown.
+2. Exporta o copia el Markdown.
+3. Pega el contenido en `content/posts/nombre-del-post/index.md`.
+4. Copia las imágenes al mismo directorio.
+5. Ajusta el front matter si hace falta.
+
+Ejemplo de front matter:
+
+```yaml
+---
+title: "Mi primer post"
+date: 2026-05-20
+description: "Descripción breve del post"
+tags: ["hugo", "blog"]
+draft: false
+---
+```
+
+## Publicar
+
+Antes de desplegar, ajusta `baseURL` en `hugo.toml` al dominio final de tu web.
+
+Genera el sitio estático:
+
+```bash
+hugo
+```
+
+El resultado queda en `public/`. Sube esa carpeta a tu hosting estático o despliega con el sistema que uses.
+
+## Comandos útiles
+
+```bash
+hugo server
+hugo new content posts/mi-post/index.md
+hugo new content projects/mi-proyecto/index.md
+hugo
+```

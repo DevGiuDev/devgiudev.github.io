@@ -1,0 +1,28 @@
+{{ define "main" }}
+  <article class="single">
+    <header class="page-header">
+      <p class="eyebrow">{{ .Section | default "Página" }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}
+        <p class="lede">{{ . }}</p>
+      {{ end }}
+      {{ if and (or (eq .Section "posts") (eq .Section "projects")) .Date }}
+        <div class="page-meta">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+          {{ with .Params.tags }}
+            <span class="tags">
+              {{ range . }}
+                <span class="tag">{{ . }}</span>
+              {{ end }}
+            </span>
+          {{ end }}
+        </div>
+      {{ end }}
+    </header>
+
+    <div class="prose post-content">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}
+

@@ -1,0 +1,35 @@
+baseURL = "http://localhost:1313/"
+defaultContentLanguage = "es"
+title = "Mi web personal"
+enableRobotsTXT = true
+paginate = 10
+
+[params]
+  author = "Tu nombre"
+  description = "Web personal con blog y proyectos"
+  mainSections = ["posts"]
+
+[menus]
+  [[menus.main]]
+    name = "Inicio"
+    pageRef = "/"
+    weight = 10
+  [[menus.main]]
+    name = "Sobre mí"
+    pageRef = "/about"
+    weight = 20
+  [[menus.main]]
+    name = "Blog"
+    pageRef = "/posts"
+    weight = 30
+  [[menus.main]]
+    name = "Proyectos"
+    pageRef = "/projects"
+    weight = 40
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.highlight]
+    noClasses = false
+    style = "github"
